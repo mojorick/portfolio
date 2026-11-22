@@ -24,6 +24,24 @@
     
     <!-- KaTeX CSS for rendered math -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+
+    <!-- Anti-Netlify Promo Badge / HUD Suppressor -->
+    <script>
+      (function() {
+        const killNetlifyHud = function() {
+          const els = document.querySelectorAll('#nl-badge-frame, #nl-hud-frame, iframe[title*="Netlify"], iframe[title*="Powered by Netlify"], script[src*="/.netlify/scripts/hud"]');
+          for (var i = 0; i < els.length; i++) {
+            els[i].remove();
+          }
+        };
+        try {
+          const obs = new MutationObserver(killNetlifyHud);
+          obs.observe(document.documentElement, { childList: true, subtree: true });
+        } catch (e) {}
+        window.addEventListener('DOMContentLoaded', killNetlifyHud);
+        window.addEventListener('load', killNetlifyHud);
+      })();
+    </script>
   </head>
   <body class="bg-[#07090e] text-slate-100 antialiased selection:bg-blue-500/30 selection:text-blue-200">
     <div id="root"></div>
