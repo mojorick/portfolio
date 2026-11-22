@@ -92,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
           <div>
-            © {new Date().getFullYear()} {personalInfo.name} • Hébergé sur Netlify • DNS Spaceship
+            © {new Date().getFullYear()} {personalInfo.name}. {lang === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}
           </div>
 
           <button
