@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MathTex } from '../../utils/katex';
-import { Language } from '../../types';
-import { Play, RotateCcw, Sparkles, Brain, Cpu, Sigma } from 'lucide-react';
+import type { Language } from '../../types';
+import { RotateCcw, Sigma, CheckCircle2 } from 'lucide-react';
 
 interface EigenLabProps {
   lang: Language;
@@ -15,7 +15,6 @@ interface Matrix2x2 {
 }
 
 export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
-  // Matrix coefficients: [a, b; c, d]
   const [matrix, setMatrix] = useState<Matrix2x2>({
     a: 2.0,
     b: 0.8,
@@ -23,12 +22,10 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     d: 1.2
   });
 
-  // Interactive user probe vector x
   const [probeVector, setProbeVector] = useState<{ x: number; y: number }>({ x: 1, y: 0.5 });
   const [isDragging, setIsDragging] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Presets
   const presets = [
     {
       id: 'covariance',
@@ -62,8 +59,8 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
       name: { fr: 'Projection Singulière (SVD)', en: 'Singular Projection (SVD)' },
       matrix: { a: 1.6, b: 0.8, c: 0.8, d: 0.4 },
       desc: {
-        fr: 'Matrice de rang 1 : det(A) = 0. Le cercle unitaire s\'écrase sur une droite (espace latent 1D).',
-        en: 'Rank-1 matrix: det(A) = 0. The unit circle collapses onto a 1D latent subspace.'
+        fr: 'Matrice de rang 1 : det(A) = 0. Le cercle unitaire se projette sur une droite (espace latent 1D).',
+        en: 'Rank-1 matrix: det(A) = 0. The unit circle projects onto a 1D line.'
       }
     }
   ];
@@ -84,9 +81,7 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     lambda1 = (trace + sqrtDisc) / 2;
     lambda2 = (trace - sqrtDisc) / 2;
 
-    // Helper to calculate eigenvector for eigenvalue lambda
     const getEigenvector = (lam: number) => {
-      // (a - lam)*x + b*y = 0  => y = -(a-lam)*x / b if b != 0
       if (Math.abs(matrix.b) > 1e-5) {
         const vx = matrix.b;
         const vy = lam - matrix.a;
@@ -98,7 +93,6 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
         const norm = Math.hypot(vx, vy);
         return norm > 0 ? { x: vx / norm, y: vy / norm } : { x: 0, y: 1 };
       } else {
-        // Diagonal matrix
         if (Math.abs(lam - matrix.a) < 1e-4) return { x: 1, y: 0 };
         return { x: 0, y: 1 };
       }
@@ -108,20 +102,17 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     v2 = getEigenvector(lambda2);
   }
 
-  // Transformed probe vector Ax
   const transformedProbe = {
     x: matrix.a * probeVector.x + matrix.b * probeVector.y,
     y: matrix.c * probeVector.x + matrix.d * probeVector.y
   };
 
-  // Check if probe vector is close to an eigenvector
   const probeNorm = Math.hypot(probeVector.x, probeVector.y);
   const transNorm = Math.hypot(transformedProbe.x, transformedProbe.y);
   let isAligned = false;
   let currentEigenRatio = 0;
 
   if (probeNorm > 0.05 && transNorm > 0.05) {
-    // Cross product in 2D = x1*y2 - y1*x2
     const cross = Math.abs(probeVector.x * transformedProbe.y - probeVector.y * transformedProbe.x);
     const dot = probeVector.x * transformedProbe.x + probeVector.y * transformedProbe.y;
     if (cross / (probeNorm * transNorm) < 0.08) {
@@ -130,7 +121,7 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     }
   }
 
-  // Canvas drawing
+  // Draw technical workbench canvas
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -139,15 +130,14 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
 
     const width = canvas.width;
     const height = canvas.height;
-    const scale = 50; // pixels per unit
+    const scale = 50;
     const cx = width / 2;
     const cy = height / 2;
 
-    // Reset & clear
     ctx.clearRect(0, 0, width, height);
 
-    // Dark grid background
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+    // Subtle technical grid
+    ctx.strokeStyle = '#18181b';
     ctx.lineWidth = 1;
     for (let x = -6; x <= 6; x++) {
       ctx.beginPath();
@@ -162,11 +152,10 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
       ctx.stroke();
     }
 
-    // Transformed warped grid lines (showing the deformation of linear space)
-    ctx.strokeStyle = 'rgba(59, 130, 246, 0.12)';
+    // Warped grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
     for (let i = -5; i <= 5; i++) {
-      // Line parallel to canonical Y: x = i, y from -5 to 5
       const p1 = { x: matrix.a * i + matrix.b * -5, y: matrix.c * i + matrix.d * -5 };
       const p2 = { x: matrix.a * i + matrix.b * 5, y: matrix.c * i + matrix.d * 5 };
       ctx.beginPath();
@@ -174,7 +163,6 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
       ctx.lineTo(cx + p2.x * scale, cy - p2.y * scale);
       ctx.stroke();
 
-      // Line parallel to canonical X: y = i, x from -5 to 5
       const q1 = { x: matrix.a * -5 + matrix.b * i, y: matrix.c * -5 + matrix.d * i };
       const q2 = { x: matrix.a * 5 + matrix.b * i, y: matrix.c * 5 + matrix.d * i };
       ctx.beginPath();
@@ -183,8 +171,8 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
       ctx.stroke();
     }
 
-    // Axes
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    // Main Axes
+    ctx.strokeStyle = '#3f3f46';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(0, cy);
@@ -193,20 +181,18 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     ctx.lineTo(cx, height);
     ctx.stroke();
 
-    // Original Unit Circle S^1 (Dotted cyan)
-    ctx.strokeStyle = 'rgba(6, 182, 212, 0.35)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 4]);
+    // Unit Circle S^1 (Dotted)
+    ctx.strokeStyle = '#52525b';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
     ctx.beginPath();
     ctx.arc(cx, cy, scale, 0, Math.PI * 2);
     ctx.stroke();
     ctx.setLineDash([]);
 
     // Transformed Unit Circle -> Ellipse (A * S^1)
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.9)';
-    ctx.lineWidth = 2.5;
-    ctx.shadowColor = 'rgba(56, 189, 248, 0.6)';
-    ctx.shadowBlur = 12;
+    ctx.strokeStyle = '#e4e4e7';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     const steps = 120;
     for (let i = 0; i <= steps; i++) {
@@ -221,102 +207,74 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
       else ctx.lineTo(px, py);
     }
     ctx.stroke();
-    ctx.shadowBlur = 0;
 
-    // Draw Eigenvector axes (if real)
+    // Invariant Eigenspaces (if real)
     if (hasRealEigenvalues && v1 && v2 && lambda1 !== null && lambda2 !== null) {
-      // Eigenvector 1 (Emerald/Cyan glow)
       const drawEigAxis = (vec: { x: number; y: number }, lam: number, color: string, label: string) => {
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 6]);
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(cx - vec.x * scale * 4, cy + vec.y * scale * 4);
         ctx.lineTo(cx + vec.x * scale * 4, cy - vec.y * scale * 4);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Transformed vector v_i * lambda
         const tvx = vec.x * lam;
         const tvy = vec.y * lam;
         ctx.strokeStyle = color;
-        ctx.lineWidth = 3.5;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 10;
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx + tvx * scale, cy - tvy * scale);
         ctx.stroke();
 
-        // Arrow head
-        const angle = Math.atan2(-tvy, tvx);
         ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(cx + tvx * scale, cy - tvy * scale);
-        ctx.lineTo(
-          cx + tvx * scale - 12 * Math.cos(angle - Math.PI / 6),
-          cy - tvy * scale - 12 * Math.sin(angle - Math.PI / 6)
-        );
-        ctx.lineTo(
-          cx + tvx * scale - 12 * Math.cos(angle + Math.PI / 6),
-          cy - tvy * scale - 12 * Math.sin(angle + Math.PI / 6)
-        );
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Label
-        ctx.fillStyle = color;
-        ctx.font = 'bold 12px "JetBrains Mono", monospace';
+        ctx.font = '11px "JetBrains Mono", monospace';
         ctx.fillText(
           `${label} (λ=${lam.toFixed(2)})`,
-          cx + tvx * scale + 10,
-          cy - tvy * scale - 5
+          cx + tvx * scale + 8,
+          cy - tvy * scale - 4
         );
       };
 
-      drawEigAxis(v1, lambda1, '#10b981', 'v₁');
+      drawEigAxis(v1, lambda1, '#22c55e', 'v₁');
       drawEigAxis(v2, lambda2, '#a855f7', 'v₂');
     }
 
-    // Draw User Probe Vector x (Amber)
+    // User Probe Vector x
     ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(cx + probeVector.x * scale, cy - probeVector.y * scale);
     ctx.stroke();
 
-    // Probe point draggable handle
-    ctx.fillStyle = '#fbbf24';
+    ctx.fillStyle = '#f59e0b';
     ctx.beginPath();
-    ctx.arc(cx + probeVector.x * scale, cy - probeVector.y * scale, 6, 0, Math.PI * 2);
+    ctx.arc(cx + probeVector.x * scale, cy - probeVector.y * scale, 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Draw Transformed Vector Ax (Bright Yellow/Orange)
-    ctx.strokeStyle = isAligned ? '#10b981' : '#f43f5e';
-    ctx.lineWidth = 3;
-    ctx.shadowColor = isAligned ? '#10b981' : '#f43f5e';
-    ctx.shadowBlur = isAligned ? 15 : 0;
+    // Transformed Vector Ax
+    ctx.strokeStyle = isAligned ? '#22c55e' : '#f43f5e';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(cx + transformedProbe.x * scale, cy - transformedProbe.y * scale);
     ctx.stroke();
-    ctx.shadowBlur = 0;
 
-    // Transformed tip
-    ctx.fillStyle = isAligned ? '#10b981' : '#f43f5e';
+    ctx.fillStyle = isAligned ? '#22c55e' : '#f43f5e';
     ctx.beginPath();
-    ctx.arc(cx + transformedProbe.x * scale, cy - transformedProbe.y * scale, 5, 0, Math.PI * 2);
+    ctx.arc(cx + transformedProbe.x * scale, cy - transformedProbe.y * scale, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Labels
-    ctx.fillStyle = '#fbbf24';
+    ctx.fillStyle = '#f59e0b';
     ctx.font = '11px monospace';
-    ctx.fillText('x (sonde)', cx + probeVector.x * scale + 8, cy - probeVector.y * scale);
+    ctx.fillText('x', cx + probeVector.x * scale + 8, cy - probeVector.y * scale);
 
-    ctx.fillStyle = isAligned ? '#10b981' : '#f43f5e';
+    ctx.fillStyle = isAligned ? '#22c55e' : '#f43f5e';
     ctx.fillText(
-      isAligned ? `Ax = ${currentEigenRatio.toFixed(2)}x !` : 'Ax',
+      isAligned ? `Ax = ${currentEigenRatio.toFixed(2)}x` : 'Ax',
       cx + transformedProbe.x * scale + 8,
       cy - transformedProbe.y * scale
     );
@@ -326,7 +284,6 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     draw();
   }, [draw]);
 
-  // Handle canvas mouse dragging
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -339,7 +296,6 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     const px = (clientX - cx) / scale;
     const py = (cy - clientY) / scale;
 
-    // If close to probe tip, drag
     const dist = Math.hypot(px - probeVector.x, py - probeVector.y);
     if (dist < 0.6) {
       setIsDragging(true);
@@ -359,7 +315,6 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     const cy = canvas.height / 2;
     const newX = (clientX - cx) / scale;
     const newY = (cy - clientY) / scale;
-    // Limit bounds
     setProbeVector({
       x: Math.max(-3.5, Math.min(3.5, newX)),
       y: Math.max(-3.5, Math.min(3.5, newY))
@@ -371,127 +326,114 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
   };
 
   return (
-    <div className="glass-card rounded-2xl p-6 md:p-8 relative overflow-hidden border border-blue-500/20 bg-slate-950/80">
-      {/* Background glow accent */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-6 md:p-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-zinc-800">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-mono font-medium mb-2">
-            <Sigma className="w-3.5 h-3.5" />
-            {lang === 'fr' ? 'Démonstrateur Interactif • MPSI / MP* ➔ IA' : 'Interactive Lab • Math Prep (MP*) ➔ AI'}
-          </div>
-          <h3 className="text-xl md:text-2xl font-bold text-white flex items-center gap-2">
-            <span>{lang === 'fr' ? 'Algèbre Spectrale, Vecteurs Propres & Espace Latent' : 'Spectral Algebra, Eigenvectors & Latent Space'}</span>
+          <span className="text-xs font-mono text-zinc-400 block mb-1">
+            {lang === 'fr' ? 'Fondations Mathématiques (MPSI / MP*) ➔ Espaces Latents & IA' : 'Mathematical Foundations (MP*) ➔ Latent Space & AI'}
+          </span>
+          <h3 className="text-lg md:text-xl font-bold text-white">
+            {lang === 'fr' ? 'Algèbre Spectrale, Vecteurs Propres & Projection' : 'Spectral Algebra, Eigenvectors & Linear Mapping'}
           </h3>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+          <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
             {lang === 'fr'
-              ? 'Manipulez la matrice A, observez la déformation de l\'espace euclidien et découvrez comment les axes invariants (Av = λv) constituent le fondement mathématique de la PCA, de la SVD et des têtes d\'attention.'
-              : 'Manipulate matrix A, observe the Euclidean space warp, and see how invariant eigenspaces (Av = λv) form the mathematical bedrock of PCA, SVD, and Transformer attention.'}
+              ? 'Modifiez les coefficients de la matrice A et observez la transformation linéaire. Les axes invariants (Av = λv) forment la colonne vertébrale mathématique de la PCA, de la SVD et des têtes d\'attention.'
+              : 'Modify the matrix coefficients to inspect the linear transformation. Invariant eigenspaces (Av = λv) represent the mathematical bedrock of PCA, SVD, and Transformer attention.'}
           </p>
         </div>
 
-        {/* Alignment badge */}
-        <div className="flex items-center">
+        <div>
           {isAligned ? (
-            <div className="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-xs font-mono flex items-center gap-2 animate-pulse shadow-lg shadow-emerald-500/20">
-              <Sparkles className="w-4 h-4 text-emerald-400" />
+            <div className="px-3 py-1.5 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs font-mono flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>
                 {lang === 'fr'
-                  ? `ALIGNEMENT PROPRE DÉTECTÉ : Ax = ${currentEigenRatio.toFixed(2)}x`
-                  : `EIGEN-ALIGNMENT DETECTED: Ax = ${currentEigenRatio.toFixed(2)}x`}
+                  ? `Sous-espace propre identifié : Ax = ${currentEigenRatio.toFixed(2)}x`
+                  : `Invariant eigenspace aligned: Ax = ${currentEigenRatio.toFixed(2)}x`}
               </span>
             </div>
           ) : (
-            <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-mono flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-              <span>{lang === 'fr' ? 'Déplacez la sonde (point orange)' : 'Drag orange probe vector'}</span>
+            <div className="px-3 py-1.5 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-400 text-xs font-mono">
+              {lang === 'fr' ? 'Glissez le vecteur x (point orange)' : 'Drag probe vector x (orange dot)'}
             </div>
           )}
         </div>
       </div>
 
-      {/* Preset selector bar */}
+      {/* Presets */}
       <div className="mb-6">
-        <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">
-          {lang === 'fr' ? 'Configurations Remarquables / Cas d\'usage IA :' : 'Notable Presets / AI Use Cases:'}
-        </label>
+        <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider block mb-2">
+          {lang === 'fr' ? 'Configurations matricielles remarquables :' : 'Standard Matrix Presets:'}
+        </span>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {presets.map((preset) => (
             <button
               key={preset.id}
               onClick={() => setMatrix(preset.matrix)}
-              className="text-left p-3 rounded-xl bg-slate-900/80 hover:bg-blue-900/20 border border-slate-800 hover:border-blue-500/40 transition-all text-xs group cursor-pointer"
+              className="text-left p-3 rounded-lg bg-zinc-950 hover:bg-zinc-800/80 border border-zinc-800 hover:border-zinc-700 transition-colors text-xs cursor-pointer"
             >
-              <div className="font-semibold text-slate-200 group-hover:text-blue-400 mb-1 flex items-center justify-between">
-                <span>{preset.name[lang]}</span>
-                <Play className="w-3 h-3 text-slate-500 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="font-medium text-zinc-200 mb-1">
+                {preset.name[lang]}
               </div>
-              <p className="text-[11px] text-slate-400 line-clamp-2">{preset.desc[lang]}</p>
+              <p className="text-[11px] text-zinc-500 line-clamp-2">{preset.desc[lang]}</p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Main Grid: Canvas & Math Controls */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        {/* Left: Canvas visualization */}
+        {/* Left: Canvas */}
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-square max-w-[480px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex items-center justify-center">
+          <div className="relative w-full aspect-square max-w-[460px] bg-zinc-950 rounded-xl border border-zinc-800 overflow-hidden flex items-center justify-center">
             <canvas
               ref={canvasRef}
-              width={480}
-              height={480}
+              width={460}
+              height={460}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
               className="w-full h-full cursor-crosshair touch-none"
             />
 
-            {/* In-canvas legend */}
-            <div className="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800/80 text-[11px] font-mono flex flex-col gap-1 pointer-events-none">
-              <div className="flex items-center gap-2 text-cyan-400">
-                <span className="w-2.5 h-0.5 bg-cyan-400 inline-block" />
+            <div className="absolute bottom-3 left-3 bg-zinc-950/90 px-3 py-2 rounded border border-zinc-800 text-[11px] font-mono flex flex-col gap-1 pointer-events-none">
+              <div className="flex items-center gap-2 text-zinc-300">
+                <span className="w-2.5 h-0.5 bg-zinc-300 inline-block" />
                 <span>{lang === 'fr' ? 'Cercle unitaire déformé S¹' : 'Transformed Unit Circle S¹'}</span>
               </div>
               <div className="flex items-center gap-2 text-emerald-400">
                 <span className="w-2.5 h-0.5 bg-emerald-400 inline-block" />
-                <span>{lang === 'fr' ? 'Vecteur propre v₁ (Axe invariant 1)' : 'Eigenvector v₁ (Invariant axis 1)'}</span>
+                <span>{lang === 'fr' ? 'Vecteur propre v₁' : 'Eigenvector v₁'}</span>
               </div>
               <div className="flex items-center gap-2 text-purple-400">
                 <span className="w-2.5 h-0.5 bg-purple-400 inline-block" />
-                <span>{lang === 'fr' ? 'Vecteur propre v₂ (Axe invariant 2)' : 'Eigenvector v₂ (Invariant axis 2)'}</span>
-              </div>
-              <div className="flex items-center gap-2 text-amber-400">
-                <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
-                <span>{lang === 'fr' ? 'Sonde x (Draggable)' : 'Probe vector x (Draggable)'}</span>
+                <span>{lang === 'fr' ? 'Vecteur propre v₂' : 'Eigenvector v₂'}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Matrix Inputs & Live Math Expressions */}
+        {/* Right: Controls & Equations */}
         <div className="lg:col-span-5 flex flex-col gap-4">
-          {/* Matrix Input Panel */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono text-slate-400">
-                {lang === 'fr' ? 'Matrice de Transformation A :' : 'Transformation Matrix A:'}
+              <span className="text-xs font-mono text-zinc-400">
+                {lang === 'fr' ? 'Matrice de transformation A :' : 'Transformation Matrix A:'}
               </span>
               <button
                 onClick={() => setMatrix({ a: 2.0, b: 0.8, c: 0.8, d: 1.2 })}
-                className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+                className="text-zinc-500 hover:text-zinc-300 p-1 transition-colors cursor-pointer"
                 title="Reset"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 max-w-[280px] mx-auto my-2">
+            <div className="grid grid-cols-2 gap-2.5 max-w-[280px] mx-auto my-1">
               {(['a', 'b', 'c', 'd'] as const).map((coef) => (
-                <div key={coef} className="flex items-center gap-2 bg-slate-950 p-2 rounded-lg border border-slate-800">
-                  <span className="text-xs font-mono font-bold text-blue-400 w-4">{coef}:</span>
+                <div key={coef} className="flex items-center gap-2 bg-zinc-900 p-2 rounded border border-zinc-800">
+                  <span className="text-xs font-mono font-bold text-zinc-300 w-4">{coef}:</span>
                   <input
                     type="range"
                     min="-3"
@@ -501,9 +443,9 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
                     onChange={(e) =>
                       setMatrix((prev) => ({ ...prev, [coef]: parseFloat(e.target.value) }))
                     }
-                    className="w-full accent-blue-500 cursor-pointer h-1.5"
+                    className="w-full accent-zinc-400 cursor-pointer h-1.5"
                   />
-                  <span className="text-xs font-mono text-slate-200 w-8 text-right">
+                  <span className="text-xs font-mono text-zinc-200 w-8 text-right">
                     {matrix[coef].toFixed(1)}
                   </span>
                 </div>
@@ -511,62 +453,56 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
             </div>
           </div>
 
-          {/* Real-time Math Output (KaTeX) */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col gap-3 font-mono text-xs">
-            <div className="text-slate-400 border-b border-slate-800/80 pb-2 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 flex flex-col gap-3 font-mono text-xs">
+            <div className="text-zinc-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
               <span>{lang === 'fr' ? 'Équation Caractéristique :' : 'Characteristic Polynomial:'}</span>
-              <span className="text-blue-400">
+              <span className="text-zinc-200">
                 <MathTex math={`\\det(A - \\lambda I) = 0`} />
               </span>
             </div>
 
-            <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800/50 flex flex-col gap-2">
+            <div className="bg-zinc-900/60 p-3 rounded border border-zinc-800/80 flex flex-col gap-1.5">
               <div>
-                <span className="text-slate-400">Polynôme : </span>
+                <span className="text-zinc-500">Polynôme : </span>
                 <MathTex
                   math={`P(\\lambda) = \\lambda^2 - (${trace.toFixed(2)})\\lambda + (${det.toFixed(2)})`}
                 />
               </div>
               <div>
-                <span className="text-slate-400">Discriminant : </span>
+                <span className="text-zinc-500">Discriminant : </span>
                 <MathTex
-                  math={`\\Delta = T^2 - 4D = ${discriminant.toFixed(2)} \\quad ${
-                    hasRealEigenvalues ? '\\ge 0 \\; (\\text{Réel})' : '< 0 \\; (\\text{Complexe})'
+                  math={`\\Delta = ${discriminant.toFixed(2)} \\quad ${
+                    hasRealEigenvalues ? '\\ge 0 \\; (\\text{Racines réelles})' : '< 0 \\; (\\text{Racines complexes})'
                   }`}
                 />
               </div>
             </div>
 
-            {/* Calculated Eigenvalues */}
             <div className="grid grid-cols-2 gap-2 mt-1">
-              <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30">
-                <div className="text-emerald-400 font-semibold mb-1">λ₁ (Valeur propre 1)</div>
-                <div className="text-sm font-bold text-slate-100">
+              <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
+                <div className="text-zinc-400 text-[11px] mb-0.5">λ₁ (Valeur propre 1)</div>
+                <div className="text-sm font-bold text-white">
                   {hasRealEigenvalues && lambda1 !== null ? lambda1.toFixed(3) : 'Complexe'}
                 </div>
               </div>
-              <div className="p-2.5 rounded-lg bg-purple-950/30 border border-purple-500/30">
-                <div className="text-purple-400 font-semibold mb-1">λ₂ (Valeur propre 2)</div>
-                <div className="text-sm font-bold text-slate-100">
+              <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
+                <div className="text-zinc-400 text-[11px] mb-0.5">λ₂ (Valeur propre 2)</div>
+                <div className="text-sm font-bold text-white">
                   {hasRealEigenvalues && lambda2 !== null ? lambda2.toFixed(3) : 'Complexe'}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Connection to AI & CIFRE */}
-          <div className="p-4 rounded-xl bg-gradient-to-br from-blue-950/40 to-slate-900 border border-blue-500/20 flex items-start gap-3">
-            <Brain className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <div className="font-semibold text-blue-300 mb-1">
-                {lang === 'fr' ? 'La passerelle MPSI/MP* ➔ Recherche en IA' : 'The MPSI/MP* ➔ AI Research Bridge'}
-              </div>
-              <p className="text-slate-400 leading-relaxed">
-                {lang === 'fr'
-                  ? 'En IA, la matrice de covariance C = X^T X est diagonalisée pour extraire les composantes principales (PCA). Dans les Transformers, le produit Q K^T projette les tokens sur des sous-espaces invariants pour calculer les coefficients d\'attention.'
-                  : 'In AI, the covariance matrix C = X^T X is diagonalized to extract principal components (PCA). In Transformers, Q K^T projects tokens onto invariant subspaces to compute multi-head attention weights.'}
-              </p>
+          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-400 leading-relaxed">
+            <div className="font-semibold text-zinc-200 mb-1">
+              {lang === 'fr' ? 'Application aux modèles d\'apprentissage (IA)' : 'Application to Machine Learning Models'}
             </div>
+            <p>
+              {lang === 'fr'
+                ? 'La diagonalisation de la matrice de covariance C = X^T X isole les composantes principales de variance (PCA). Dans les Transformers, le produit Q K^T est une forme bilinéaire projetant les représentations sur des axes de corrélation sémantique.'
+                : 'Diagonalizing the covariance matrix C = X^T X isolates principal variance components (PCA). In Transformers, Q K^T operates as a bilinear form projecting representations onto semantic correlation axes.'}
+            </p>
           </div>
         </div>
       </div>

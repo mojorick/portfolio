@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Language } from '../../types';
+import type { Language } from '../../types';
 import { EigenLab } from './EigenLab';
 import { RailwayLab } from './RailwayLab';
-import { Sigma, Train, Sparkles } from 'lucide-react';
+import { Sigma, Train } from 'lucide-react';
 
 interface InteractiveLabProps {
   lang: Language;
@@ -12,53 +12,52 @@ export const InteractiveLab: React.FC<InteractiveLabProps> = ({ lang }) => {
   const [activeTab, setActiveTab] = useState<'eigen' | 'railway'>('eigen');
 
   return (
-    <section id="interactive-lab" className="py-16 md:py-24 relative">
+    <section id="interactive-lab" className="py-16 md:py-24 border-b border-zinc-800/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section title */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-mono font-medium mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>{lang === 'fr' ? 'Le Laboratoire d\'Expérimentation' : 'Interactive Research Lab'}</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-            {lang === 'fr' ? 'La Preuve par le Code & les Mathématiques' : 'Proof through Code & Rigorous Math'}
+          <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider block mb-2">
+            {lang === 'fr' ? 'Démonstrateurs Interactifs' : 'Interactive Lab'}
+          </span>
+          <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            {lang === 'fr' ? 'Expérimentation Algorithmique & Modélisation' : 'Algorithmic Proof & Technical Workbench'}
           </h2>
-          <p className="mt-3 text-slate-400 max-w-2xl mx-auto text-sm md:text-base">
+          <p className="mt-2 text-zinc-400 max-w-2xl mx-auto text-sm">
             {lang === 'fr'
-              ? 'Deux démonstrateurs exécutés en direct dans votre navigateur : de la théorie spectrale des classes préparatoires (MP*) aux systèmes critiques de régulation ferroviaire (SNCF Voyageurs).'
-              : 'Two interactive live simulators running in your browser: from pure spectral theory (MP* Prep Classes) to mission-critical railway dispatch systems (SNCF Voyageurs).'}
+              ? 'Deux simulateurs exécutés en direct dans le navigateur : de la théorie spectrale des classes préparatoires (MP*) aux algorithmes de régulation ferroviaire chez SNCF Voyageurs.'
+              : 'Two live computational simulators: from pure spectral theory (MP* Prep Classes) to railway dispatch heuristics at SNCF Voyageurs.'}
           </p>
 
-          {/* Tab Selector Switch */}
-          <div className="inline-flex p-1.5 rounded-2xl bg-slate-900 border border-slate-800 mt-8 max-w-md w-full shadow-xl">
+          {/* Tab Selector Switch (Clean, professional) */}
+          <div className="inline-flex p-1 rounded-lg bg-zinc-900 border border-zinc-800 mt-6 max-w-md w-full">
             <button
               onClick={() => setActiveTab('eigen')}
-              className={`flex-1 py-2.5 px-4 rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              className={`flex-1 py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                 activeTab === 'eigen'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-zinc-800 text-white font-semibold'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Sigma className="w-4 h-4" />
-              <span>{lang === 'fr' ? '1. Algèbre Spectrale ➔ IA' : '1. Spectral Algebra ➔ AI'}</span>
+              <Sigma className="w-3.5 h-3.5" />
+              <span>{lang === 'fr' ? 'Algèbre Spectrale ➔ IA' : 'Spectral Algebra ➔ AI'}</span>
             </button>
 
             <button
               onClick={() => setActiveTab('railway')}
-              className={`flex-1 py-2.5 px-4 rounded-xl text-xs md:text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+              className={`flex-1 py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                 activeTab === 'railway'
-                  ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  ? 'bg-zinc-800 text-white font-semibold'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Train className="w-4 h-4" />
-              <span>{lang === 'fr' ? '2. SNCF & Optimisation (RO)' : '2. SNCF & Optimization (OR)'}</span>
+              <Train className="w-3.5 h-3.5" />
+              <span>{lang === 'fr' ? 'Réseau Ferroviaire (RO)' : 'Railway Operations (OR)'}</span>
             </button>
           </div>
         </div>
 
         {/* Active demonstrator */}
-        <div className="transition-all duration-300">
+        <div>
           {activeTab === 'eigen' ? (
             <EigenLab lang={lang} />
           ) : (
