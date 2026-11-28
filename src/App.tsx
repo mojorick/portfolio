@@ -1,85 +1,44 @@
-import React, { useState } from 'react';
-import { Language, ViewMode } from './types';
+import { useEffect, useState } from 'react';
+import type { Language } from './types';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { InteractiveLab } from './components/InteractiveLab/InteractiveLab';
 import { ExperienceSection } from './components/Experience';
+import { InteractiveLab } from './components/InteractiveLab/InteractiveLab';
 import { ResearchVision } from './components/ResearchVision';
 import { EducationSection } from './components/Education';
-import { SkillsSection } from './components/SkillsSection';
-import { ContactModal } from './components/ContactModal';
-import { CommandPalette } from './components/CommandPalette';
+import { Resume } from './components/Resume';
 import { Footer } from './components/Footer';
 
-export function App() {
-  const [lang, setLang] = useState<Language>('fr');
-  const [mode, setMode] = useState<ViewMode>('recruiter');
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isCommandOpen, setIsCommandOpen] = useState(false);
+export default function App() {
+  const [lang, setLang] = useState<Language>(() => {
+    const requested = new URLSearchParams(window.location.search).get('lang');
+    if (requested === 'en' || requested === 'fr') return requested;
+    return navigator.language.startsWith('fr') ? 'fr' : 'en';
+  });
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState(window.history.state, '', url);
+    document.documentElement.lang = lang;
+    document.title = lang === 'fr'
+      ? 'Hémérick Morié — Stage international en data engineering'
+      : 'Hémérick Morié — International Data Engineering Internship';
+  }, [lang]);
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col font-sans selection:bg-blue-500/30 selection:text-blue-200">
-      {/* Top Navbar */}
-      <Navbar
-        lang={lang}
-        setLang={setLang}
-        mode={mode}
-        setMode={setMode}
-        onOpenCommand={() => setIsCommandOpen(true)}
-        onOpenContact={() => setIsContactOpen(true)}
-      />
-
-      {/* Main Content Sections */}
-      <main className="flex-1">
-        {/* Hero Section */}
-        <Hero
-          lang={lang}
-          mode={mode}
-          onOpenContact={() => setIsContactOpen(true)}
-        />
-
-        {/* Interactive Lab (Eigenvalues/Eigenvectors & SNCF Rerouting) */}
+    <>
+      <a className="skip-link" href="#main">{lang === 'fr' ? 'Aller au contenu' : 'Skip to content'}</a>
+      <Navbar lang={lang} setLang={setLang} />
+      <main id="main">
+        <Hero lang={lang} />
+        <ExperienceSection lang={lang} />
+        <Resume key={lang} lang={lang} />
         <InteractiveLab lang={lang} />
-
-        {/* Experience Section (SNCF Voyageurs & Jolipixel) */}
-        <ExperienceSection lang={lang} mode={mode} />
-
-        {/* Research Vision (CIFRE PhD & Operations Research / AI) */}
-        <ResearchVision
-          lang={lang}
-          mode={mode}
-          onOpenContact={() => setIsContactOpen(true)}
-        />
-
-        {/* Education Section (CESI & INPHB MP*) */}
+        <ResearchVision lang={lang} />
         <EducationSection lang={lang} />
-
-        {/* Skills Arsenal */}
-        <SkillsSection lang={lang} />
       </main>
-
-      {/* Footer */}
       <Footer lang={lang} />
-
-      {/* Contact Modal */}
-      <ContactModal
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
-        lang={lang}
-      />
-
-      {/* Command Palette */}
-      <CommandPalette
-        isOpen={isCommandOpen}
-        onClose={() => setIsCommandOpen(false)}
-        lang={lang}
-        setLang={setLang}
-        mode={mode}
-        setMode={setMode}
-        onOpenContact={() => setIsContactOpen(true)}
-      />
-    </div>
+    </>
   );
 }
-
-export default App;

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { Language } from '../../types';
-import { Train, AlertCircle, CheckCircle2, RotateCcw, Clock, ArrowRight } from 'lucide-react';
+import { AlertCircle, CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
 
 interface RailwayLabProps {
   lang: Language;
@@ -19,35 +19,35 @@ interface Track {
   source: string;
   target: string;
   baseWeight: number; // minutes
-  capacity: number;
 }
 
+const stations: Station[] = [
+  { id: 'nantes', name: 'Nantes', x: 120, y: 220, hub: true },
+  { id: 'st-nazaire', name: 'Saint-Nazaire', x: 40, y: 200 },
+  { id: 'angers', name: 'Angers St-Laud', x: 230, y: 190 },
+  { id: 'rennes', name: 'Rennes', x: 160, y: 110, hub: true },
+  { id: 'le-mans', name: 'Le Mans', x: 330, y: 150, hub: true },
+  { id: 'tours', name: 'Tours', x: 320, y: 250 },
+  { id: 'paris', name: 'Paris Montparnasse', x: 460, y: 80, hub: true },
+  { id: 'redon', name: 'Redon', x: 90, y: 150 },
+];
+
+const initialTracks: Track[] = [
+  { id: 'stnazaire-nantes', source: 'st-nazaire', target: 'nantes', baseWeight: 35 },
+  { id: 'nantes-redon', source: 'nantes', target: 'redon', baseWeight: 40 },
+  { id: 'redon-rennes', source: 'redon', target: 'rennes', baseWeight: 45 },
+  { id: 'nantes-angers', source: 'nantes', target: 'angers', baseWeight: 38 },
+  { id: 'angers-lemans', source: 'angers', target: 'le-mans', baseWeight: 42 },
+  { id: 'angers-tours', source: 'angers', target: 'tours', baseWeight: 50 },
+  { id: 'rennes-lemans', source: 'rennes', target: 'le-mans', baseWeight: 55 },
+  { id: 'lemans-paris', source: 'le-mans', target: 'paris', baseWeight: 54 },
+  { id: 'tours-paris', source: 'tours', target: 'paris', baseWeight: 70 },
+];
+
 export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
-  const stations: Station[] = [
-    { id: 'nantes', name: 'Nantes', x: 120, y: 220, hub: true },
-    { id: 'st-nazaire', name: 'Saint-Nazaire', x: 40, y: 200 },
-    { id: 'angers', name: 'Angers St-Laud', x: 230, y: 190 },
-    { id: 'rennes', name: 'Rennes', x: 160, y: 110, hub: true },
-    { id: 'le-mans', name: 'Le Mans', x: 330, y: 150, hub: true },
-    { id: 'tours', name: 'Tours', x: 320, y: 250 },
-    { id: 'paris', name: 'Paris Montparnasse', x: 460, y: 80, hub: true },
-    { id: 'redon', name: 'Redon', x: 90, y: 150 },
-  ];
 
-  const initialTracks: Track[] = [
-    { id: 'stnazaire-nantes', source: 'st-nazaire', target: 'nantes', baseWeight: 35, capacity: 6 },
-    { id: 'nantes-redon', source: 'nantes', target: 'redon', baseWeight: 40, capacity: 5 },
-    { id: 'redon-rennes', source: 'redon', target: 'rennes', baseWeight: 45, capacity: 8 },
-    { id: 'nantes-angers', source: 'nantes', target: 'angers', baseWeight: 38, capacity: 12 },
-    { id: 'angers-lemans', source: 'angers', target: 'le-mans', baseWeight: 42, capacity: 10 },
-    { id: 'angers-tours', source: 'angers', target: 'tours', baseWeight: 50, capacity: 7 },
-    { id: 'rennes-lemans', source: 'rennes', target: 'le-mans', baseWeight: 55, capacity: 14 },
-    { id: 'lemans-paris', source: 'le-mans', target: 'paris', baseWeight: 54, capacity: 20 },
-    { id: 'tours-paris', source: 'tours', target: 'paris', baseWeight: 70, capacity: 12 },
-  ];
-
-  const [disruptedTracks, setDisruptedTracks] = useState<Record<string, { incident: string; penalty: number }>>({
-    'angers-lemans': { incident: 'Arrachement Caténaire (Voie Coupée)', penalty: 999 }
+  const [disruptedTracks, setDisruptedTracks] = useState<Record<string, number>>({
+    'angers-lemans': 120
   });
 
   const origin = 'nantes';
@@ -59,10 +59,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
       if (next[trackId]) {
         delete next[trackId];
       } else {
-        next[trackId] = {
-          incident: 'Aléa d\'Exploitation / Ralentissement',
-          penalty: 120
-        };
+        next[trackId] = 120;
       }
       return next;
     });
@@ -74,7 +71,6 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
 
   // Dijkstra dynamic rerouting
   const routingResult = useMemo(() => {
-    const startTime = performance.now();
     const distances: Record<string, number> = {};
     const previous: Record<string, { station: string; track: Track } | null> = {};
     const unvisited = new Set<string>();
@@ -108,7 +104,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
         else if (track.target === currentStationId) neighborId = track.source;
 
         if (neighborId && unvisited.has(neighborId)) {
-          const penalty = disruptedTracks[track.id] ? disruptedTracks[track.id].penalty : 0;
+          const penalty = disruptedTracks[track.id] ?? 0;
           const alt = distances[currentStationId] + track.baseWeight + penalty;
           if (alt < distances[neighborId]) {
             distances[neighborId] = alt;
@@ -135,7 +131,6 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
       }
     }
 
-    const calcTime = Math.max(0.4, Number((performance.now() - startTime).toFixed(2)));
     const nominalTime = 134;
 
     return {
@@ -143,7 +138,6 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
       usedTrackIds,
       totalDuration: distances[destination],
       nominalTime,
-      calcTime,
       isReRouted: usedTrackIds.has('rennes-lemans') || usedTrackIds.has('nantes-redon') || usedTrackIds.has('tours-paris')
     };
   }, [origin, destination, disruptedTracks]);
@@ -156,15 +150,15 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-zinc-800">
         <div>
           <span className="text-xs font-mono text-zinc-400 block mb-1">
-            {lang === 'fr' ? 'Projet Industriel • SNCF Voyageurs Nantes' : 'Industrial System • SNCF Voyageurs Nantes'}
+            {lang === 'fr' ? 'Simulation sur données fictives' : 'Simulation with synthetic data'}
           </span>
           <h3 className="text-lg md:text-xl font-bold text-white">
-            {lang === 'fr' ? 'Gestion des Transports Perturbés & Re-routage Dynamique' : 'Disrupted Transport Operations & Dynamic Rerouting'}
+            {lang === 'fr' ? 'Recalcul d’un itinéraire ferroviaire' : 'Recalculating a railway route'}
           </h3>
           <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
             {lang === 'fr'
-              ? 'Simulation de la logique développée chez SNCF Voyageurs : cliquez sur un tronçon pour générer un aléa. L\'algorithme de Recherche Opérationnelle recalcule instantanément le plan de transport optimal.'
-              : 'Simulation of the decision system built at SNCF Voyageurs: click any track to inject an operational disruption. The Operations Research algorithm recalculates an optimal detour.'}
+              ? 'Activez un incident sur un tronçon. L’algorithme de Dijkstra recalcule le trajet de durée minimale entre Nantes et Paris.'
+              : 'Toggle a disruption on a track segment. Dijkstra’s algorithm recalculates the fastest route from Nantes to Paris.'}
           </p>
         </div>
 
@@ -193,7 +187,21 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
                 const isSelectedPath = routingResult.usedTrackIds.has(track.id);
 
                 return (
-                  <g key={track.id} onClick={() => toggleDisruption(track.id)} className="cursor-pointer">
+                  <g
+                    key={track.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${s1.name} – ${s2.name}`}
+                    aria-pressed={isDisrupted}
+                    onClick={() => toggleDisruption(track.id)}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        toggleDisruption(track.id);
+                      }
+                    }}
+                    className="cursor-pointer"
+                  >
                     <line
                       x1={s1.x}
                       y1={s1.y}
@@ -252,7 +260,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
                       textAnchor="middle"
                       fill={isInPath ? '#f4f4f5' : '#71717a'}
                       fontSize={station.hub ? 11 : 9.5}
-                      fontFamily="Inter, sans-serif"
+                      fontFamily="system-ui, sans-serif"
                       fontWeight={station.hub ? 600 : 400}
                       className="pointer-events-none"
                     >
@@ -271,7 +279,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
 
         {/* Live Metrics */}
         <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
+          <div aria-live="polite" className="p-4 rounded-xl bg-zinc-950 border border-zinc-800">
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-zinc-800">
               <span className="text-xs font-mono text-zinc-400">
                 {lang === 'fr' ? 'Itinéraire calculé :' : 'Calculated Route:'}
@@ -317,10 +325,10 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
 
               <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
                 <div className="text-zinc-500 text-[11px] mb-0.5">
-                  {lang === 'fr' ? 'Temps calcul algorithme' : 'Compute Latency'}
+                  {lang === 'fr' ? 'Sans perturbation' : 'Without disruptions'}
                 </div>
                 <div className="text-sm font-bold text-zinc-200">
-                  {routingResult.calcTime} ms
+                  {routingResult.nominalTime} min
                 </div>
               </div>
             </div>
@@ -337,7 +345,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
               </div>
             ) : (
               <div className="space-y-2 font-mono">
-                {Object.entries(disruptedTracks).map(([trackId, info]) => {
+                {Object.entries(disruptedTracks).map(([trackId, delay]) => {
                   const track = initialTracks.find(t => t.id === trackId);
                   const s1 = getStationById(track?.source || '');
                   const s2 = getStationById(track?.target || '');
@@ -349,7 +357,7 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
                       <div className="flex items-center gap-2 text-zinc-300">
                         <AlertCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
                         <span>
-                          {s1?.name} ↔ {s2?.name} : {info.incident}
+                          {s1?.name} ↔ {s2?.name} (+{delay} min)
                         </span>
                       </div>
                       <button
@@ -367,8 +375,8 @@ export const RailwayLab: React.FC<RailwayLabProps> = ({ lang }) => {
 
           <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-400 leading-relaxed">
             {lang === 'fr'
-              ? 'Ce simulateur reflète les systèmes d\'ingénierie développés chez SNCF Voyageurs : intégration de contraintes de capacité, temps de calcul sub-seconde et synchronisation des référentiels de transport.'
-              : 'This simulator mirrors the engineering systems developed at SNCF Voyageurs: integrating capacity constraints, sub-second compute latency, and operational dispatch synchronization.'}
+              ? 'Chaque incident ajoute 120 minutes au tronçon concerné. Le calcul porte sur un seul trajet et une carte simplifiée.'
+              : 'Each disruption adds 120 minutes to the affected segment. The simulation models one journey on a simplified map.'}
           </div>
         </div>
       </div>

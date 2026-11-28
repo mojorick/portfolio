@@ -17,20 +17,21 @@ export const InteractiveLab: React.FC<InteractiveLabProps> = ({ lang }) => {
         {/* Section title */}
         <div className="text-center mb-10">
           <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider block mb-2">
-            {lang === 'fr' ? 'Démonstrateurs Interactifs' : 'Interactive Lab'}
+            {lang === 'fr' ? 'Projets personnels' : 'Personal projects'}
           </span>
           <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-            {lang === 'fr' ? 'Expérimentation Algorithmique & Modélisation' : 'Algorithmic Proof & Technical Workbench'}
+            {lang === 'fr' ? 'Démonstrateurs interactifs' : 'Interactive demos'}
           </h2>
           <p className="mt-2 text-zinc-400 max-w-2xl mx-auto text-sm">
             {lang === 'fr'
-              ? 'Deux simulateurs exécutés en direct dans le navigateur : de la théorie spectrale des classes préparatoires (MP*) aux algorithmes de régulation ferroviaire chez SNCF Voyageurs.'
-              : 'Two live computational simulators: from pure spectral theory (MP* Prep Classes) to railway dispatch heuristics at SNCF Voyageurs.'}
+              ? 'Explorez une transformation linéaire en 2D ou recalculez un itinéraire sur un réseau ferroviaire simulé.'
+              : 'Explore a 2D linear transformation or recalculate a route on a simulated railway network.'}
           </p>
 
           {/* Tab Selector Switch (Clean, professional) */}
           <div className="inline-flex p-1 rounded-lg bg-zinc-900 border border-zinc-800 mt-6 max-w-md w-full">
             <button
+              aria-pressed={activeTab === 'eigen'}
               onClick={() => setActiveTab('eigen')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                 activeTab === 'eigen'
@@ -39,10 +40,11 @@ export const InteractiveLab: React.FC<InteractiveLabProps> = ({ lang }) => {
               }`}
             >
               <Sigma className="w-3.5 h-3.5" />
-              <span>{lang === 'fr' ? 'Algèbre Spectrale ➔ IA' : 'Spectral Algebra ➔ AI'}</span>
+              <span>{lang === 'fr' ? 'Algèbre linéaire' : 'Linear algebra'}</span>
             </button>
 
             <button
+              aria-pressed={activeTab === 'railway'}
               onClick={() => setActiveTab('railway')}
               className={`flex-1 py-2 px-3 rounded-md text-xs font-medium flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                 activeTab === 'railway'
@@ -51,7 +53,7 @@ export const InteractiveLab: React.FC<InteractiveLabProps> = ({ lang }) => {
               }`}
             >
               <Train className="w-3.5 h-3.5" />
-              <span>{lang === 'fr' ? 'Réseau Ferroviaire (RO)' : 'Railway Operations (OR)'}</span>
+              <span>{lang === 'fr' ? 'Réseau ferroviaire' : 'Railway routing'}</span>
             </button>
           </div>
         </div>

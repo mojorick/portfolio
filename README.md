@@ -1,32 +1,16 @@
-# React + TypeScript + Vite
+# Portfolio de Hémérick Morié
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Portfolio bilingue réalisé avec React, TypeScript et Vite.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm ci
+npm run dev
+npm run lint
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Mettre à jour les CV
+
+Le profil, les expériences et les disponibilités sont dans `src/data/content.ts`. Le document partagé entre l’aperçu du site et l’impression est `src/components/ResumeDocument.tsx`. Les liens publics Canva sont dans `src/components/Resume.tsx`.
+
+Après une modification du CV, ouvrez `/?resume=fr` et `/?resume=en` sur le serveur de développement. Imprimez chaque page en PDF au format A4, avec les en-têtes et pieds de page du navigateur désactivés. Remplacez `public/cv/hemerick-morie-fr.pdf` et `public/cv/hemerick-morie-en.pdf`, puis vérifiez que chaque document tient sur une page et que son texte est sélectionnable.

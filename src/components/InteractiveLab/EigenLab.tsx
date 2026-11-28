@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MathTex } from '../../utils/katex';
 import type { Language } from '../../types';
-import { RotateCcw, Sigma, CheckCircle2 } from 'lucide-react';
+import { RotateCcw, CheckCircle2 } from 'lucide-react';
 
 interface EigenLabProps {
   lang: Language;
@@ -102,19 +102,17 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     v2 = getEigenvector(lambda2);
   }
 
-  const transformedProbe = {
-    x: matrix.a * probeVector.x + matrix.b * probeVector.y,
-    y: matrix.c * probeVector.x + matrix.d * probeVector.y
-  };
+  const transformedX = matrix.a * probeVector.x + matrix.b * probeVector.y;
+  const transformedY = matrix.c * probeVector.x + matrix.d * probeVector.y;
 
   const probeNorm = Math.hypot(probeVector.x, probeVector.y);
-  const transNorm = Math.hypot(transformedProbe.x, transformedProbe.y);
+  const transNorm = Math.hypot(transformedX, transformedY);
   let isAligned = false;
   let currentEigenRatio = 0;
 
   if (probeNorm > 0.05 && transNorm > 0.05) {
-    const cross = Math.abs(probeVector.x * transformedProbe.y - probeVector.y * transformedProbe.x);
-    const dot = probeVector.x * transformedProbe.x + probeVector.y * transformedProbe.y;
+    const cross = Math.abs(probeVector.x * transformedY - probeVector.y * transformedX);
+    const dot = probeVector.x * transformedX + probeVector.y * transformedY;
     if (cross / (probeNorm * transNorm) < 0.08) {
       isAligned = true;
       currentEigenRatio = dot / (probeNorm * probeNorm);
@@ -260,12 +258,12 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + transformedProbe.x * scale, cy - transformedProbe.y * scale);
+    ctx.lineTo(cx + transformedX * scale, cy - transformedY * scale);
     ctx.stroke();
 
     ctx.fillStyle = isAligned ? '#22c55e' : '#f43f5e';
     ctx.beginPath();
-    ctx.arc(cx + transformedProbe.x * scale, cy - transformedProbe.y * scale, 4, 0, Math.PI * 2);
+    ctx.arc(cx + transformedX * scale, cy - transformedY * scale, 4, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#f59e0b';
@@ -275,10 +273,10 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
     ctx.fillStyle = isAligned ? '#22c55e' : '#f43f5e';
     ctx.fillText(
       isAligned ? `Ax = ${currentEigenRatio.toFixed(2)}x` : 'Ax',
-      cx + transformedProbe.x * scale + 8,
-      cy - transformedProbe.y * scale
+      cx + transformedX * scale + 8,
+      cy - transformedY * scale
     );
-  }, [matrix, probeVector, isAligned, currentEigenRatio, hasRealEigenvalues, lambda1, lambda2, v1, v2, transformedProbe]);
+  }, [matrix, probeVector, isAligned, currentEigenRatio, hasRealEigenvalues, lambda1, lambda2, v1, v2, transformedX, transformedY]);
 
   useEffect(() => {
     draw();
@@ -339,7 +337,7 @@ export const EigenLab: React.FC<EigenLabProps> = ({ lang }) => {
           <p className="text-xs text-zinc-400 mt-1 max-w-2xl">
             {lang === 'fr'
               ? 'Modifiez les coefficients de la matrice A et observez la transformation linéaire. Les axes invariants (Av = λv) forment la colonne vertébrale mathématique de la PCA, de la SVD et des têtes d\'attention.'
-              : 'Modify the matrix coefficients to inspect the linear transformation. Invariant eigenspaces (Av = λv) represent the mathematical bedrock of PCA, SVD, and Transformer attention.'}
+              : 'Modify the matrix coefficients to inspect the linear transformation. Invariant eigenspaces (Av = λv) represent the mathematical bedrock of principal component analysis (PCA).'}
           </p>
         </div>
 
