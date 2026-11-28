@@ -192,33 +192,13 @@ body {
 .hero-availability { display: grid; gap: 0.15rem; margin-bottom: 1.35rem; font-size: 0.9rem; color: var(--muted); }
 .hero-availability strong { color: var(--accent); }
 
-body.resume-page { background: #fff; color: #111827; }
-.resume-document {
-  max-width: 52rem;
-  margin: 1.5rem auto 0 0;
-  padding: clamp(0.85rem, 4vw, 2.15rem);
-  color: #111827;
-  background: #fff;
-  border-radius: 0.55rem;
-  color-scheme: light;
-  overflow-wrap: anywhere;
-  font-family: Arial, sans-serif;
-  font-size: 0.925rem;
-  line-height: 1.48;
-}
-.resume-page .resume-document { margin: 0 auto; }
-.resume-document a { color: #173862; text-decoration: underline; }
-.resume-document .resume-name { font-size: 1.85em; line-height: 1.12; font-weight: 750; margin-bottom: 0.25em; }
-.resume-role { font-weight: 700; }
-.resume-document section { margin-top: 1.05em; }
-.resume-document h3 { font-weight: 750; font-size: 1.12em; border-bottom: 1px solid #bac2ce; margin: 0 0 0.35em; }
-.resume-document h4 { font-weight: 700; margin-top: 0.5em; }
-.resume-document ul { margin: 0.2em 0; padding-inline-start: 1.25em; list-style-type: disc; }
-.resume-document li + li { margin-top: 0.22em; }
-
-@page { size: A4; margin: 14mm; }
-@media print {
-  .resume-page .resume-document { padding: 0; margin: 0; max-width: none; font-size: 10.5pt; line-height: 1.38; }
-  .resume-document h3, .resume-document h4 { break-after: avoid; }
-  .resume-document li { break-inside: avoid; }
+#resume-preview { margin-top: 1rem; }
+.resume-open { margin-bottom: 0.75rem; }
+.resume-pdf {
+  display: block;
+  width: 100%;
+  height: clamp(24rem, 80vh, 64rem);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--panel);
 }
