@@ -80,11 +80,13 @@ export const education = [
         'Génie logiciel : modéliser un système, structurer une application et développer ses fonctionnalités.',
         'Données : concevoir un modèle relationnel, interroger une base avec SQL et exploiter les résultats.',
         'Systèmes distribués : raisonner sur les échanges entre composants d’une application.',
+        'Projet d’A2 au CESI Saint-Nazaire : conception d’une plateforme de gestion des stages avec Laravel et MySQL, avec authentification et gestion des offres et des candidatures.',
       ],
       en: [
         'Software engineering: modeling systems, structuring applications, and implementing features.',
         'Data: designing relational models, querying databases with SQL, and working with the results.',
         'Distributed systems: reasoning about how application components communicate.',
+        'Second-year project at CESI Saint-Nazaire: designed an internship management platform with Laravel and MySQL, including authentication, job postings, and application management.',
       ],
     },
     location: 'La Rochelle, France',
