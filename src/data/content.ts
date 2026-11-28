@@ -42,31 +42,8 @@ export const projects = [
 
 export const education = [
   {
-    institution: 'CESI La Rochelle',
-    degree: {
-      fr: 'Diplôme d’ingénieur en informatique, en cours',
-      en: 'Computer engineering degree, in progress',
-    },
-    description: {
-      fr: 'Cycle ingénieur, de l’A3 à l’A4, avec une quatrième année en alternance. Au CESI, je travaille sur des problèmes concrets en équipe grâce à l’apprentissage actif par problèmes et par projets (A2P2).',
-      en: 'I’m in the fourth year of the engineering program and combine coursework with an apprenticeship. At CESI, problem- and project-based learning gives me practice solving practical engineering problems in teams.',
-    },
-    topics: {
-      fr: [
-        'Génie logiciel : modéliser un système, structurer une application et développer ses fonctionnalités.',
-        'Données : concevoir un modèle relationnel, interroger une base avec SQL et exploiter les résultats.',
-        'Systèmes distribués : raisonner sur les échanges entre composants d’une application.',
-      ],
-      en: [
-        'Software engineering: modeling systems, structuring applications, and implementing features.',
-        'Data: designing relational models, querying databases with SQL, and working with the results.',
-        'Distributed systems: reasoning about how application components communicate.',
-      ],
-    },
-    location: 'La Rochelle, France',
-  },
-  {
     institution: 'INP-HB',
+    period: { fr: 'Septembre 2022 – avril 2024', en: 'September 2022 – April 2024' },
     degree: {
       fr: 'Deux ans de prépa maths-physique · MPSI puis MP*',
       en: 'Two-year mathematics and physics program · MPSI then MP*',
@@ -87,6 +64,31 @@ export const education = [
     },
     location: 'Yamoussoukro, Côte d’Ivoire',
   },
+  {
+    institution: 'CESI La Rochelle',
+    period: { fr: 'Octobre 2024 – septembre 2028', en: 'October 2024 – September 2028' },
+    degree: {
+      fr: 'Diplôme d’ingénieur en informatique, en cours',
+      en: 'Computer engineering degree, in progress',
+    },
+    description: {
+      fr: 'Actuellement en A4, j’ai commencé mon alternance en A3 pour une durée de trois ans. Au CESI, je travaille en équipe sur des problèmes d’ingénierie concrets grâce à l’apprentissage actif par problèmes et par projets (A2P2).',
+      en: 'I’m in the fourth year of the engineering program and started my three-year apprenticeship in my third year. At CESI, I work in teams to solve practical engineering problems through problem- and project-based learning.',
+    },
+    topics: {
+      fr: [
+        'Génie logiciel : modéliser un système, structurer une application et développer ses fonctionnalités.',
+        'Données : concevoir un modèle relationnel, interroger une base avec SQL et exploiter les résultats.',
+        'Systèmes distribués : raisonner sur les échanges entre composants d’une application.',
+      ],
+      en: [
+        'Software engineering: modeling systems, structuring applications, and implementing features.',
+        'Data: designing relational models, querying databases with SQL, and working with the results.',
+        'Distributed systems: reasoning about how application components communicate.',
+      ],
+    },
+    location: 'La Rochelle, France',
+  },
 ];
 
 export const internship = {
@@ -102,9 +104,11 @@ export const internship = {
 
 export const webInternship = {
   title: { fr: 'Stage en développement web', en: 'Web Development Intern' },
-  period: { fr: 'avril – août 2025', en: 'April – August 2025' },
+  period: { fr: 'Avril – août 2025', en: 'April – August 2025' },
+  location: 'Saint-Nazaire, France',
   contribution: {
-    fr: 'Développement et intégration d’applications web avec Symfony et WordPress.',
-    en: 'Built and integrated web applications with Symfony and WordPress.',
+    fr: 'J’ai participé au développement et à la maintenance de sites web sur mesure. J’ai travaillé sur la personnalisation de sites WordPress et sur le développement web en PHP avec Symfony.',
+    en: 'I helped build and maintain custom websites. My work included customizing WordPress sites and developing web applications in PHP with Symfony.',
   },
+  stack: ['WordPress', 'PHP', 'Symfony'],
 };

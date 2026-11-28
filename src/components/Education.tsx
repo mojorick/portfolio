@@ -9,7 +9,7 @@ export function EducationSection({ lang }: { lang: Language }) {
         <div className="card-grid education-grid">
           {education.map(program => (
             <article key={program.institution} className="portfolio-card">
-              <p className="card-meta">{program.location}</p>
+              <p className="card-meta">{program.period[lang]} · {program.location}</p>
               <h3>{program.institution}</h3>
               <p className="degree">{program.degree[lang]}</p>
               <p>{program.description[lang]}</p>

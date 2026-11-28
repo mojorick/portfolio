@@ -157,11 +157,12 @@ body {
 .section-intro { margin-top: 0.8rem; }
 .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; }
 .portfolio-card { background: var(--panel); border: 1px solid var(--line); border-radius: 0.75rem; padding: clamp(1rem, 2.4vw, 1.5rem); display: flex; flex-direction: column; gap: 0.7rem; }
-.portfolio-card h3, .experience-note h3 { font-weight: 700; font-size: 1.07rem; letter-spacing: -0.02em; }
-.portfolio-card p, .experience-note p { color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
+.portfolio-card h3 { font-weight: 700; font-size: 1.07rem; letter-spacing: -0.02em; }
+.portfolio-card p { color: var(--muted); line-height: 1.6; font-size: 0.95rem; }
 .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.5rem; margin-top: auto; }
 .tags li { border: 1px solid var(--line); border-radius: 0.35rem; padding: 0.2rem 0.45rem; font-size: 0.75rem; color: var(--accent); }
-.experience-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.85rem 1rem; margin-top: 1.5rem; }
+.experience-note { margin-top: 1.5rem; }
+.experience-note .text-link { margin-top: 1rem; }
 .text-link { width: fit-content; gap: 0.45rem; color: var(--accent); font-size: 0.9rem; font-weight: 650; }
 .text-link svg { flex-shrink: 0; }
 

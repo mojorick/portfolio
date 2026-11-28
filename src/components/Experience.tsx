@@ -11,7 +11,7 @@ export function ExperienceSection({ lang }: { lang: Language }) {
         <p className="section-kicker">{fr ? 'Expérience professionnelle' : 'Professional experience'}</p>
         <h2 id="experience-title">SNCF Voyageurs</h2>
         <p className="section-intro">
-          {fr ? 'Data Engineer en alternance · Nantes · Depuis octobre 2025' : 'Data Engineering Apprentice · Nantes, France · Since October 2025'}
+          {fr ? 'Data Engineer en alternance · Nantes · Octobre 2025 – septembre 2028' : 'Data Engineering Apprentice · Nantes, France · October 2025 – September 2028'}
         </p>
         <div className="card-grid">
           {projects.map(project => (
@@ -25,11 +25,15 @@ export function ExperienceSection({ lang }: { lang: Language }) {
           ))}
         </div>
         <div className="experience-note">
-          <div>
+          <article className="portfolio-card">
+            <p className="card-meta">{webInternship.period[lang]} · {webInternship.location}</p>
             <h3>Jolipixel</h3>
-            <p>{webInternship.title[lang]} · {webInternship.period[lang]}</p>
+            <p className="degree">{webInternship.title[lang]}</p>
             <p>{webInternship.contribution[lang]}</p>
-          </div>
+            <ul className="tags" aria-label="Technologies">
+              {webInternship.stack.map(technology => <li key={technology}>{technology}</li>)}
+            </ul>
+          </article>
           <a href="#interactive-lab" className="text-link">
             {fr ? 'Essayer les démonstrateurs' : 'Try the interactive demos'} <ArrowUpRight size={16} aria-hidden="true" />
           </a>
