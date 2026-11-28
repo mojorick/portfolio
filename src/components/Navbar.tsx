@@ -8,8 +8,9 @@ export function Navbar({ lang, setLang }: { lang: Language; setLang: (language: 
       <div className="site-shell header-inner">
         <a href="#top" className="site-wordmark">Hémérick Morié</a>
         <nav aria-label={fr ? 'Navigation principale' : 'Main navigation'} className="site-nav">
-          <a href="#experience">{fr ? 'Parcours' : 'Experience'}</a>
+          <a href="#experience">{fr ? 'Expérience' : 'Experience'}</a>
           <a href="#cv">{fr ? 'CV' : 'Résumé'}</a>
+          <a href="#education">{fr ? 'Formation' : 'Education'}</a>
           <a href="#research">{fr ? 'Recherche' : 'Research'}</a>
           <a href="#contact">Contact</a>
         </nav>

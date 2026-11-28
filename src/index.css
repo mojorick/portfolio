@@ -171,6 +171,9 @@ body {
 .research-grid, .education-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 4vw, 3rem); align-items: start; }
 .research-grid .text-link { margin-top: 1.25rem; }
 .education-grid { gap: 1rem; align-items: stretch; }
+.education-topics { list-style: disc outside; padding-inline-start: 1.2rem; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+.education-topics li + li { margin-top: 0.4rem; }
+.education-demo { margin-top: 1rem; }
 .portfolio-card .card-meta { font-size: 0.78rem; color: var(--accent); }
 .portfolio-card .degree { font-weight: 650; color: var(--text); }
 .site-footer { background: #0d1219; }
@@ -185,7 +188,7 @@ body {
 
 @media (max-width: 40rem) {
   .header-inner { flex-wrap: wrap; gap: 0.15rem 0.75rem; padding-top: 0.6rem; }
-  .site-nav { order: 1; flex: 0 0 100%; justify-content: space-between; }
+  .site-nav { order: 1; flex: 0 0 100%; flex-wrap: wrap; gap: 0 0.5rem; justify-content: space-between; }
   .site-nav a { font-size: 0.83rem; }
 }
 

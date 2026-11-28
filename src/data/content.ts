@@ -15,6 +15,14 @@ export const personalInfo = {
 
 export const projects = [
   {
+    title: { fr: 'Outil de gestion des transports perturbés', en: 'Railway disruption management tool' },
+    contribution: {
+      fr: 'J’ai réalisé l’essentiel de la refonte de cet outil d’aide à la décision chez SNCF Voyageurs, de la conception de l’architecture au développement en Python et React/TypeScript. L’application permet d’adapter le plan de transport en temps réel lors d’un incident.',
+      en: 'I carried out most of the redesign of this decision-support tool at SNCF Voyageurs, from designing the software architecture to implementing it in Python and React/TypeScript. The tool supports real-time changes to transport plans during disruptions.',
+    },
+    stack: ['Python', 'React', 'TypeScript'],
+  },
+  {
     title: { fr: 'Pipelines de planification ferroviaire', en: 'Railway planning data pipelines' },
     contribution: {
       fr: 'J’ai travaillé sur la modélisation des données et l’automatisation des flux entre les outils de planification et les tableaux de bord Power BI.',
@@ -28,15 +36,7 @@ export const projects = [
       fr: 'J’ai participé à la conception d’un algorithme d’allocation intégrant les règles tarifaires, le taux de remplissage et la contiguïté des places.',
       en: 'I helped design an allocation algorithm that accounts for pricing rules, train occupancy, and seating groups together.',
     },
-    stack: ['Python'],
-  },
-  {
-    title: { fr: 'Gestion des perturbations', en: 'Disruption management' },
-    contribution: {
-      fr: 'J’ai contribué à la refonte d’un outil d’aide à la décision qui permet d’adapter le plan de transport lors d’un incident.',
-      en: 'I contributed to redesigning a decision-support tool for adjusting transport plans during disruptions.',
-    },
-    stack: ['Python', 'React', 'TypeScript'],
+    stack: ['Excel / VBA'],
   },
 ];
 
@@ -48,20 +48,42 @@ export const education = [
       en: 'Computer engineering degree, in progress',
     },
     description: {
-      fr: 'Quatrième année en alternance. Projets en développement logiciel, bases de données et systèmes distribués.',
-      en: 'Fourth-year work-study student. Projects in software development, databases, and distributed systems.',
+      fr: 'Cycle ingénieur, de l’A3 à l’A4, avec une quatrième année en alternance. Au CESI, je travaille sur des problèmes concrets en équipe grâce à l’apprentissage actif par problèmes et par projets (A2P2).',
+      en: 'I’m in the fourth year of the engineering program and combine coursework with an apprenticeship. At CESI, problem- and project-based learning gives me practice solving practical engineering problems in teams.',
+    },
+    topics: {
+      fr: [
+        'Génie logiciel : modéliser un système, structurer une application et développer ses fonctionnalités.',
+        'Données : concevoir un modèle relationnel, interroger une base avec SQL et exploiter les résultats.',
+        'Systèmes distribués : raisonner sur les échanges entre composants d’une application.',
+      ],
+      en: [
+        'Software engineering: modeling systems, structuring applications, and implementing features.',
+        'Data: designing relational models, querying databases with SQL, and working with the results.',
+        'Distributed systems: reasoning about how application components communicate.',
+      ],
     },
     location: 'La Rochelle, France',
   },
   {
     institution: 'INP-HB',
     degree: {
-      fr: 'Classes préparatoires scientifiques MPSI / MP*',
-      en: 'Intensive mathematics and science program (MPSI / MP*)',
+      fr: 'Deux ans de prépa maths-physique · MPSI puis MP*',
+      en: 'Two-year mathematics and physics program · MPSI then MP*',
     },
     description: {
-      fr: 'Algèbre linéaire, analyse, physique et algorithmique.',
-      en: 'Linear algebra, mathematical analysis, physics, and algorithms.',
+      fr: 'Deux années à l’INP-HB m’ont donné des bases solides en algèbre linéaire, analyse, physique et algorithmique. J’utilise ce socle pour modéliser des problèmes, poser des hypothèses et comprendre les méthodes d’optimisation et d’apprentissage automatique.',
+      en: 'Two years at INP-HB gave me a strong grounding in linear algebra, mathematical analysis, physics, and algorithms. I draw on that foundation to model problems, state assumptions, and understand optimization and machine learning methods.',
+    },
+    topics: {
+      fr: [
+        'Recherche opérationnelle : définir une fonction objectif, traduire les contraintes métier et comparer des solutions réalisables.',
+        'Mathématiques du machine learning : relier l’algèbre linéaire à la représentation des données, et l’analyse à la minimisation d’une fonction de perte.',
+      ],
+      en: [
+        'Operations research: defining an objective, expressing operational constraints, and comparing feasible solutions.',
+        'Mathematics of machine learning: connecting linear algebra to data representation, and calculus to minimizing a loss function.',
+      ],
     },
     location: 'Yamoussoukro, Côte d’Ivoire',
   },

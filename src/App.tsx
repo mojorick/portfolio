@@ -34,9 +34,9 @@ export default function App() {
         <Hero lang={lang} />
         <ExperienceSection lang={lang} />
         <Resume key={lang} lang={lang} />
+        <EducationSection lang={lang} />
         <InteractiveLab lang={lang} />
         <ResearchVision lang={lang} />
-        <EducationSection lang={lang} />
       </main>
       <Footer lang={lang} />
     </>
